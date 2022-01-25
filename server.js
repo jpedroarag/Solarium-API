@@ -19,9 +19,14 @@ function setupDependencies(app, bodyParser, path) {
 function connectToDatabaseAndSetEndpoints(app, mongoose) {
     const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}`
     mongoose.connect(url, { useNewUrlParser: true })
-    mongoose.connection.once("open", _ => {
+    mongoose.connection
+    .once("open", _ => {
         app.post("/signin", signin.action)
         app.post("/signup", signup.action)
+        console.log("Database successfully open with url", url)
+    })
+    .once("error", error => {
+        console.log(error)
     })
 }
 
