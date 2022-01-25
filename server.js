@@ -26,6 +26,7 @@ function connectToDatabaseAndSetEndpoints(app, mongoose) {
         console.log("Database successfully open with url", url)
     })
     .once("error", error => {
+        console.log("Database failed to open with url", url)
         console.log(error)
     })
 }
