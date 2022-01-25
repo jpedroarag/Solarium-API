@@ -11,7 +11,6 @@ const signin = require("./auth/signin")
 const signup = require("./auth/signup")
 
 function setupDependencies(app, bodyParser, path) {
-    app.use(express.static(path.join(__dirname, "..", "build")))
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use(bodyParser.json())
     app.set("port", process.env.PORT || 3000)
@@ -30,7 +29,7 @@ setupDependencies(app, bodyParser, path)
 connectToDatabaseAndSetEndpoints(app, mongoose)
 
 app.get("/", (request, response) => {
-    response.sendFile(path.join(__dirname, "..", "build", "index.html"))
+    response.send({ message: "Welcome to Solarium-API!" })
 })
 const server = app.listen(app.get("port"), () => {
     console.log("Listening on port: ", server.address().port)
