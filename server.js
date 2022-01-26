@@ -7,27 +7,35 @@ require("dotenv").config()
 const express = require("express")
 const app = express()
 
+const authentication = require("./auth/authentication")
 const signin = require("./auth/signin")
 const signup = require("./auth/signup")
+
+const lessonCrud = require("./lessons/lessonCrud")
 
 function setupDependencies(app, bodyParser, path) {
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use(bodyParser.json())
     app.set("port", process.env.PORT || 3000)
+    app.use((request, response, next) => {
+        response.header(
+            "Access-Control-Allow-Headers",
+            "x-access-token, Origin, Content-Type, Accept"
+        )
+        next()
+    })
 }
 
 function connectToDatabaseAndSetEndpoints(app, mongoose) {
     const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}`
     mongoose.connect(url, { useNewUrlParser: true })
-    mongoose.connection
-    .once("open", _ => {
-        app.post("/signin", signin.action)
-        app.post("/signup", signup.action)
-        console.log("Database successfully open with url", url)
-    })
-    .once("error", error => {
-        console.log("Database failed to open with url", url)
-        console.log(error)
+    mongoose.connection.once("open", _ => {
+        app.post("/auth/signin", signin.action)
+        app.post("/auth/signup", signup.action)
+        app.get("/lessons/fetch", [authentication.verifyToken, lessonCrud.fetchAll])
+        app.post("/lessons/create", [authentication.verifyToken, lessonCrud.createLesson])
+        app.post("/lessons/update", [authentication.verifyToken, lessonCrud.editLesson])
+        app.post("/lessons/delete", [authentication.verifyToken, lessonCrud.removeLesson])
     })
 }
 

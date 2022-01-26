@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs")
 const User = require("../models/user")
-const authenticate = require("./authenticate")
+const authentication = require("./authentication")
 
 exports.action = (request, response) => {
     const json = request.body
@@ -22,6 +22,6 @@ exports.action = (request, response) => {
             })
         }
 
-        authenticate.action(user, response)
+        authentication.authenticate(user, response)
     })
 }
