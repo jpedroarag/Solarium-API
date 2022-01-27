@@ -4,7 +4,8 @@ const authentication = require("./authentication")
 
 exports.action = (request, response) => {
     const json = request.body
-    User.findOne({ username: json.username }, (error, user) => {
+    
+    User.findOne({ email: json.email }, (error, user) => {
         if(error) {
             return response.status(500).send({ message: error })
         }

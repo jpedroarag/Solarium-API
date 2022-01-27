@@ -16,15 +16,20 @@ exports.action = (request, response) => {
         return response.status(400).send({ message: "Formato de email não suportado." })
     }
 
-    const user = new User({
-        name: json.name,
-        email: json.email,
-        password: bcrypt.hashSync(json.password, 8)
-    })
-    user.save(error => {
-        if(error) {
-            return response.status(500).send({ message: error })
+    User.findOne({ email: request.body.email }, (error, dbUser) => {
+        if(dbUser) {
+            return response.status(400).send({ message: "Usuário já cadastrado com o email informado." })
         }
-        authentication.authenticate(user, response)
+        const user = new User({
+            name: json.name,
+            email: json.email,
+            password: bcrypt.hashSync(json.password, 8)
+        })
+        user.save(error => {
+            if(error) {
+                return response.status(500).send({ message: error })
+            }
+            authentication.authenticate(user, response)
+        })
     })
 }
