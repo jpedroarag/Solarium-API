@@ -32,6 +32,8 @@ function connectToDatabaseAndSetEndpoints(app, mongoose) {
     mongoose.connection.once("open", _ => {
         app.post("/auth/signin", signin.action)
         app.post("/auth/signup", signup.action)
+        app.post("/auth/sendPasswordResetLink", authentication.sendPasswordResetLink)
+        app.post("/auth/resetPassword", authentication.resetPassword)
         app.get("/lessons/fetch", [authentication.verifyToken, lessonCrud.fetchAll])
         app.post("/lessons/create", [authentication.verifyToken, lessonCrud.createLesson])
         app.post("/lessons/update", [authentication.verifyToken, lessonCrud.editLesson])
