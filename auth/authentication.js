@@ -3,6 +3,7 @@ const crypto = require("crypto")
 const jwt = require("jsonwebtoken")
 const ResetToken = require("../models/resetToken")
 const User = require("../models/user")
+const email = require("./email")
 require("dotenv").config()
 
 exports.authenticate = (user, response) => {
@@ -60,7 +61,15 @@ exports.sendPasswordResetLink = (request, response) => {
                     return response.status(500).send({ message: "Erro interno." })
                 }
                 const link = `${process.env.RESET_PASS_CLIENT_URL}?token=${resetToken}&id=${user._id}`
-                // send email here
+                const resetPasswordEmailInfo = {
+                    from: process.env.MAIL_USER,
+                    to: user.email,
+                    subject: "Redefinir senha",
+                    html: `<p>Olá ${user.name}!<br/>Para redefinir sua senha, basta clicar no link abaixo:<br/><a href=\"${link}\">Redefinir senha</a></p>`
+                }
+                email.mailer.sendMail(resetPasswordEmailInfo)
+                .then(info => console.log(`Enviado com sucesso para ${user.email}.`) )
+                .catch(error => console.log(error))
                 response.status(200).send({ resetLink: link })
             })
         })
