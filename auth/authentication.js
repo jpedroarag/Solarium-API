@@ -23,12 +23,12 @@ exports.verifyToken = (request, response, next) => {
     let token = request.headers["x-access-token"]
 
     if(!token) {
-        return response.status(403).send({ message: "Nenhum token fornecido." })
+        return response.status(403).send({ error: "Nenhum token fornecido." })
     }
 
     jwt.verify(token, process.env.AUTH_SECRET, (error, decoded) => {
         if(error) {
-            return response.status(401).send({ message: "Unauthorized." })
+            return response.status(401).send({ error: "Unauthorized." })
         }
         request.userId = decoded.id
         next()
@@ -38,10 +38,10 @@ exports.verifyToken = (request, response, next) => {
 exports.sendPasswordResetLink = (request, response) => {
     User.findOne({ email: request.body.email }, (error, user) => {
         if(error) {
-            return response.status(500).send({ message: "Erro interno." })
+            return response.status(500).send({ error: "Erro interno." })
         }
         if(!user) {
-            return response.status(400).send({ message: "Email informado não cadastrado." })
+            return response.status(400).send({ error: "Email informado não cadastrado." })
         }
 
         ResetToken.findOne({ requestedBy: user._id }, (error, token) => {
@@ -58,7 +58,7 @@ exports.sendPasswordResetLink = (request, response) => {
                 createdAt: new Date()
             }).save(error => {
                 if(error) {
-                    return response.status(500).send({ message: "Erro interno." })
+                    return response.status(500).send({ error: "Erro interno." })
                 }
                 const link = `${process.env.RESET_PASS_CLIENT_URL}?token=${resetToken}&id=${user._id}`
                 const resetPasswordEmailInfo = {
@@ -82,13 +82,13 @@ exports.resetPassword = (request, response) => {
 
     ResetToken.find({ requestedBy: json.id }, (error, dbResetTokens) => {
         if(!dbResetTokens || error) {
-            return response.status(408).send({ message: "Link expirado ou inválido!" })
+            return response.status(400).send({ error: "Link expirado ou inválido!" })
         }
 
         const dbResetToken = dbResetTokens.find(element => bcrypt.compareSync(resetToken, element.hash))
 
         if(!dbResetToken) {
-            return response.status(400).send({ message: "Link inválido!" })
+            return response.status(400).send({ error: "Link inválido!" })
         }
 
         const currentDate = new Date()
@@ -105,13 +105,13 @@ exports.resetPassword = (request, response) => {
                 { new: true },
                 (error, user) => {
                 if(error) {
-                    response.status(400).send({ message: "Link inválido!" })
+                    response.status(400).send({ error: "Link inválido!" })
                 }
                 dbResetToken.deleteOne()
                 this.authenticate(user, response)
             })
         } else {
-            response.status(408).send({ message: "Link expirado!" })
+            response.status(400).send({ error: "Link expirado!" })
         }
     })
 }

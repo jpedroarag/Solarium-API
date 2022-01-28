@@ -13,12 +13,12 @@ exports.action = (request, response) => {
     const isEmailValid = validateEmail(json.email)
 
     if(!isEmailValid) {
-        return response.status(400).send({ message: "Formato de email não suportado." })
+        return response.status(400).send({ error: "Formato de email não suportado." })
     }
 
     User.findOne({ email: request.body.email }, (error, dbUser) => {
         if(dbUser) {
-            return response.status(400).send({ message: "Usuário já cadastrado com o email informado." })
+            return response.status(400).send({ error: "Usuário já cadastrado com o email informado." })
         }
         const user = new User({
             name: json.name,
@@ -27,7 +27,7 @@ exports.action = (request, response) => {
         })
         user.save(error => {
             if(error) {
-                return response.status(500).send({ message: error })
+                return response.status(500).send({ error: error })
             }
             authentication.authenticate(user, response)
         })

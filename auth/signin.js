@@ -7,11 +7,11 @@ exports.action = (request, response) => {
     
     User.findOne({ email: json.email }, (error, user) => {
         if(error) {
-            return response.status(500).send({ message: error })
+            return response.status(500).send({ error: error })
         }
 
         if(!user) {
-            return response.status(404).send({ message: "Usuário não encontrado." })
+            return response.status(404).send({ error: "Usuário não encontrado." })
         }
         
         const isPasswordValid = bcrypt.compareSync(json.password, user.password)
@@ -19,7 +19,7 @@ exports.action = (request, response) => {
         if(!isPasswordValid) {
             return response.status(401).send({
                 accessToken: null,
-                message: "Senha inválida."
+                error: "Senha inválida."
             })
         }
 
