@@ -16,7 +16,7 @@ const lessonCrud = require("./lessons/lessonCrud")
 function setupDependencies(app, bodyParser, path) {
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use(bodyParser.json())
-    app.set("port", process.env.PORT || 3001)
+    app.set("port", process.env.PORT || 3000)
     app.use((request, response, next) => {
         response.header(
             "Access-Control-Allow-Headers",
