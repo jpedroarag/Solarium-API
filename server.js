@@ -16,11 +16,14 @@ const lessonCrud = require("./lessons/lessonCrud")
 function setupDependencies(app, bodyParser, path) {
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use(bodyParser.json())
-    app.set("port", process.env.PORT || 3000)
+    app.set("port", process.env.PORT || 3001)
     app.use((request, response, next) => {
         response.header(
             "Access-Control-Allow-Headers",
             "x-access-token, Origin, Content-Type, Accept"
+        )
+        response.header(
+            "Access-Control-Allow-Origin", "*"
         )
         next()
     })
