@@ -1,5 +1,19 @@
 const Lesson = require("../models/lesson.js")
 
+exports.fetchSingle = (request, response) => {
+    Lesson.findOne({ _id: request.body.id },  (error, lesson) => {
+        if(error) {
+            return response.status(500).send({ error: error })
+        }
+        
+        if(!lesson) {
+            return response.status(404).send({ error: "Aula não encontrada." })
+        }
+
+        response.status(200).send(lesson)
+    })
+}
+
 exports.fetchAll = (request, response) => {
     Lesson.find({ createdBy: request.userId }, (error, lessons) => {
         if(error) {
