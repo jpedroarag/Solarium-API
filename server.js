@@ -14,8 +14,8 @@ const signup = require("./auth/signup")
 const lessonCrud = require("./lessons/lessonCrud")
 
 function setupDependencies(app, bodyParser, path) {
-    app.use(bodyParser.urlencoded({ extended: true }))
-    app.use(bodyParser.json())
+    app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }))
+    app.use(bodyParser.json({ limit: '50mb' }))
     app.set("port", process.env.PORT || 3000)
     app.use((request, response, next) => {
         response.header(
