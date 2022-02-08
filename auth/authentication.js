@@ -60,7 +60,7 @@ exports.sendPasswordResetLink = (request, response) => {
                 if(error) {
                     return response.status(500).send({ error: "Erro interno." })
                 }
-                const link = `${process.env.RESET_PASS_CLIENT_URL}?token=${resetToken}&id=${user._id}`
+                const link = `${process.env.RESET_PASS_CLIENT_URL}/${resetToken}/${user._id}`
                 const resetPasswordEmailInfo = {
                     from: process.env.MAIL_USER,
                     to: user.email,
