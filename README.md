@@ -1,5 +1,5 @@
 # Solarium-API
-Este repositório contém a implementação de uma API para ser usada pelo projeto [Solarium](https://github.com/jpedroarag/Solarium-UI).
+Este repositório contém a implementação de uma API para ser usada pelo projeto [Solarium](https://github.com/jpedroarag/Solarium-Interface).
 
 
 
