@@ -35,6 +35,18 @@ exports.verifyToken = (request, response, next) => {
     })
 }
 
+exports.verifyEmail = (request, response) => {
+    User.findOneAndUpdate({ _id: request.body.id }, { isVerified: true }, { new: true }, (error, user) => {
+        if(error) {
+            return response.status(500).send({ error: "Erro interno." })
+        }
+        if(!user) {
+            return response.status(400).send({ error: "Link inválido." })
+        }
+        this.authenticate(user, response)
+    })
+}
+
 exports.sendPasswordResetLink = (request, response) => {
     User.findOne({ email: request.body.email }, (error, user) => {
         if(error) {

@@ -22,6 +22,13 @@ exports.action = (request, response) => {
                 error: "Senha inválida."
             })
         }
+        
+        if(!user.isVerified && user.isVerified != null) {
+            return response.status(401).send({
+                accessToken: null,
+                error: `Verifique seu cadastro no email ${user.email}!`
+            })
+        }
 
         authentication.authenticate(user, response)
     })

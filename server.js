@@ -16,7 +16,7 @@ const lessonCrud = require("./lessons/lessonCrud")
 function setupDependencies(app, bodyParser, path) {
     app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }))
     app.use(bodyParser.json({ limit: '50mb' }))
-    app.set("port", process.env.PORT || 3000)
+    app.set("port", process.env.PORT || 3001)
     app.use((request, response, next) => {
         response.header(
             "Access-Control-Allow-Headers",
@@ -37,6 +37,7 @@ function connectToDatabaseAndSetEndpoints(app, mongoose) {
         app.post("/auth/signup", signup.action)
         app.post("/auth/sendPasswordResetLink", authentication.sendPasswordResetLink)
         app.post("/auth/resetPassword", authentication.resetPassword)
+        app.post("/auth/verify", authentication.verifyEmail)
         app.get("/lessons/fetch", [authentication.verifyToken, lessonCrud.fetchAll])
         app.post("/lessons/fetchSingle", [authentication.verifyToken, lessonCrud.fetchSingle])
         app.post("/lessons/create", [authentication.verifyToken, lessonCrud.createLesson])

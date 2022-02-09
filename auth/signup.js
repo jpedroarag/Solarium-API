@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs")
 const User = require("../models/user.js")
 const authentication = require("./authentication")
+const email = require("./email")
+require("dotenv").config()
 
 const validateEmail = (email) => {
   return email.match(
@@ -23,13 +25,25 @@ exports.action = (request, response) => {
         const user = new User({
             name: json.name,
             email: json.email,
-            password: bcrypt.hashSync(json.password, 8)
+            password: bcrypt.hashSync(json.password, 8),
+            isVerified: false
         })
         user.save(error => {
             if(error) {
                 return response.status(500).send({ error: error })
             }
-            authentication.authenticate(user, response)
+            const link = `${process.env.VERIFY_EMAIL_CLIENT_URL}/${user._id}`
+            const verifyEmailInfo = {
+                from: process.env.MAIL_USER,
+                to: user.email,
+                subject: "Verificação de email",
+                html: `<p>Olá ${user.name}!<br/>Para verificar seu email, basta clicar no link abaixo:<br/><a href=\"${link}\">Verificar email</a></p>`
+            }
+            email.mailer.sendMail(verifyEmailInfo)
+            .then(info => console.log(`Enviado com sucesso para ${user.email}.`) )
+            .catch(error => console.log(error))
+            response.status(200).send({ verifyEmailLink: link })
+            //authentication.authenticate(user, response)
         })
     })
 }
