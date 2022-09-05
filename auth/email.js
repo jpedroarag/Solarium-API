@@ -4,8 +4,11 @@ require("dotenv").config()
 exports.mailer = nodemailer.createTransport({
     host: process.env.MAIL_SERVICE_URL,
     service: process.env.MAIL_SERVICE_URL,
-    port: 465,
-    secure: true,
+    port: process.env.MAIL_SERVICE_PORT,
+    secure: process.env.MAIL_SERVICE_ISSECURE,
+    tls: {
+        ciphers: process.env.MAIL_SERVICE_TLSCIPHERS
+    },
     auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS
